@@ -55,7 +55,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLi
     /*Run the demo*/
 
     //lv_demo_widgets();
-    lv_goggle();
+    lv_hdzero_goggle();
 
     while(!lv_win32_quit_signal) {
         /* Periodically call the lv_task handler.

@@ -16,6 +16,14 @@
 /*********************
  *      DEFINES8
  *********************/
+#define SCREEN_BG               0x404040
+#define BUTTON_LV1_BG           0x303030
+
+#define BUTTON_LV1_NUMBER       9
+#define BUTTON_LV1_HEIGHT       64
+#define BUTTON_LV1_WIDTH        256
+#define BUTTON_LV1_OFFSET_X     0
+#define BUTTON_LV1_OFFSET_Y     96
 
 /**********************
  *      TYPEDEFS
@@ -85,6 +93,20 @@ static uint32_t session_desktop = 1000;
 static uint32_t session_tablet = 1000;
 static uint32_t session_mobile = 1000;
 
+static lv_obj_t * button_lv1[BUTTON_LV1_NUMBER];
+static lv_style_t style_button_lv1;
+char *button_lv1_label[BUTTON_LV1_NUMBER]= {
+    "Scan Now",
+    "Source",
+    "Image Settings",
+    "Power",
+    "Fans",
+    "Record Options",
+    "Auto Scan",
+    "Connections",
+    "Head Trancker",
+};
+
 /**********************
  *      MACROS
  **********************/
@@ -147,6 +169,8 @@ void lv_hdzero_goggle(void)
     lv_theme_default_init(NULL, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), LV_THEME_DEFAULT_DARK,
                           font_normal);
 #endif
+    // set bg color
+    lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(SCREEN_BG), 0);
 
     lv_style_init(&style_text_muted);
     lv_style_set_text_opa(&style_text_muted, LV_OPA_50);
@@ -162,6 +186,25 @@ void lv_hdzero_goggle(void)
     lv_style_set_border_width(&style_bullet, 0);
     lv_style_set_radius(&style_bullet, LV_RADIUS_CIRCLE);
 
+    lv_style_init(&style_button_lv1);
+    lv_style_set_bg_color(&style_button_lv1, lv_color_hex(BUTTON_LV1_BG));
+    lv_style_set_radius(&style_button_lv1, 0);
+    lv_style_set_height(&style_button_lv1, BUTTON_LV1_HEIGHT);
+    lv_style_set_width(&style_button_lv1, BUTTON_LV1_WIDTH);
+
+    int i;
+    lv_label_t * label;
+    for ( i = 0; i < BUTTON_LV1_NUMBER; i ++) {
+        button_lv1[i] = lv_btn_create(lv_scr_act());
+        lv_obj_add_style(button_lv1[i], &style_button_lv1, 0);
+        lv_obj_align(button_lv1[i], LV_ALIGN_TOP_LEFT, BUTTON_LV1_OFFSET_X, BUTTON_LV1_HEIGHT * i + BUTTON_LV1_OFFSET_Y);
+
+        label = lv_label_create(button_lv1[i]);
+        lv_label_set_text(label, button_lv1_label[i]);
+
+    }
+
+/*
     tv = lv_tabview_create(lv_scr_act(), LV_DIR_TOP, tab_h);
 
     lv_obj_set_style_text_font(lv_scr_act(), font_normal, 0);
@@ -193,6 +236,7 @@ void lv_hdzero_goggle(void)
     shop_create(t3);
 
     color_changer_create(tv);
+*/
 }
 
 /**********************

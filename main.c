@@ -19,6 +19,8 @@
 /*********************
  *      DEFINES
  *********************/
+#define DISP_H      1920
+#define DISP_V      1080
 
 /**********************
  *      TYPEDEFS
@@ -47,7 +49,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLi
     lv_init();
 
     /*Initialize the HAL for LittlevGL*/
-    lv_win32_init(hInstance, SW_SHOWNORMAL, 1920, 1080, NULL);
+    lv_win32_init(hInstance, SW_SHOWNORMAL, DISP_H, DISP_V, NULL);
 
     /*Output prompt information to the console, you can also use printf() to print directly*/
     LV_LOG_USER("LVGL initialization completed!");

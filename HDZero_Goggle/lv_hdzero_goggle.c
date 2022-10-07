@@ -16,8 +16,11 @@
 /*********************
  *      DEFINES8
  *********************/
+#define DISP_H                  1920
+#define DISP_V                  1080
 #define SCREEN_BG               0x404040
 #define BUTTON_LV1_BG           0x303030
+#define TOP_STATE_BG            0x303030
 
 #define BUTTON_LV1_NUMBER       9
 #define BUTTON_LV1_HEIGHT       64
@@ -66,11 +69,11 @@ static void meter3_anim_cb(void * var, int32_t v);
  **********************/
 static disp_size_t disp_size;
 
+static lv_obj_t * objTopState;
 static lv_obj_t * tv;
 static lv_obj_t * calendar;
-static lv_style_t style_text_muted;
-static lv_style_t style_title;
-static lv_style_t style_icon;
+
+static lv_style_t style_TopState;
 static lv_style_t style_bullet;
 
 static lv_obj_t * meter1;
@@ -115,8 +118,19 @@ char *button_lv1_label[BUTTON_LV1_NUMBER]= {
  *   GLOBAL FUNCTIONS
  **********************/
 
+void TopState_Create(lv_obj_t *parent)
+{
+    objTopState = lv_obj_create(parent);
+    lv_obj_set_style_border_width(objTopState, 0, 0);
+    lv_obj_set_style_radius(objTopState, 0, 0);
+    lv_obj_set_style_bg_color(objTopState, lv_color_hex(TOP_STATE_BG), 0);
+    lv_obj_set_size(objTopState, DISP_H, BUTTON_LV1_OFFSET_Y);
+    lv_obj_align(objTopState, LV_ALIGN_TOP_LEFT, 0, 0);
+}
+
 void lv_hdzero_goggle(void)
 {
+
     if(LV_HOR_RES <= 320) disp_size = DISP_SMALL;
     else if(LV_HOR_RES < 720) disp_size = DISP_MEDIUM;
     else disp_size = DISP_LARGE;
@@ -169,29 +183,17 @@ void lv_hdzero_goggle(void)
     lv_theme_default_init(NULL, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), LV_THEME_DEFAULT_DARK,
                           font_normal);
 #endif
-    // set bg color
+    // Set bg color
     lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(SCREEN_BG), 0);
 
-    lv_style_init(&style_text_muted);
-    lv_style_set_text_opa(&style_text_muted, LV_OPA_50);
-
-    lv_style_init(&style_title);
-    lv_style_set_text_font(&style_title, font_large);
-
-    lv_style_init(&style_icon);
-    lv_style_set_text_color(&style_icon, lv_theme_get_color_primary(NULL));
-    lv_style_set_text_font(&style_icon, font_large);
-
-    lv_style_init(&style_bullet);
-    lv_style_set_border_width(&style_bullet, 0);
-    lv_style_set_radius(&style_bullet, LV_RADIUS_CIRCLE);
-
+    /*Set 1st level button style*/
     lv_style_init(&style_button_lv1);
     lv_style_set_bg_color(&style_button_lv1, lv_color_hex(BUTTON_LV1_BG));
+    lv_style_set_border_width(&style_button_lv1, 0);
     lv_style_set_radius(&style_button_lv1, 0);
-    lv_style_set_height(&style_button_lv1, BUTTON_LV1_HEIGHT);
-    lv_style_set_width(&style_button_lv1, BUTTON_LV1_WIDTH);
+    lv_style_set_size(&style_button_lv1, BUTTON_LV1_WIDTH, BUTTON_LV1_HEIGHT);
 
+    /*Create 1st level button*/
     int i;
     lv_label_t * label;
     for ( i = 0; i < BUTTON_LV1_NUMBER; i ++) {
@@ -203,46 +205,15 @@ void lv_hdzero_goggle(void)
         lv_label_set_text(label, button_lv1_label[i]);
 
     }
+    
+    TopState_Create(lv_scr_act());
 
-/*
-    tv = lv_tabview_create(lv_scr_act(), LV_DIR_TOP, tab_h);
-
-    lv_obj_set_style_text_font(lv_scr_act(), font_normal, 0);
-
-    if(disp_size == DISP_LARGE) {
-        lv_obj_t * tab_btns = lv_tabview_get_tab_btns(tv);
-        lv_obj_set_style_pad_left(tab_btns, LV_HOR_RES / 2, 0);
-        lv_obj_t * logo = lv_img_create(tab_btns);
-        LV_IMG_DECLARE(img_lvgl_logo);
-        lv_img_set_src(logo, &img_lvgl_logo);
-        lv_obj_align(logo, LV_ALIGN_LEFT_MID, -LV_HOR_RES / 2 + 25, 0);
-
-        lv_obj_t * label = lv_label_create(tab_btns);
-        lv_obj_add_style(label, &style_title, 0);
-        lv_label_set_text(label, "LVGL v8");
-        lv_obj_align_to(label, logo, LV_ALIGN_OUT_RIGHT_TOP, 10, 0);
-
-        label = lv_label_create(tab_btns);
-        lv_label_set_text(label, "Widgets demo");
-        lv_obj_add_style(label, &style_text_muted, 0);
-        lv_obj_align_to(label, logo, LV_ALIGN_OUT_RIGHT_BOTTOM, 10, 0);
-    }
-
-    lv_obj_t * t1 = lv_tabview_add_tab(tv, "Profile");
-    lv_obj_t * t2 = lv_tabview_add_tab(tv, "Analytics");
-    lv_obj_t * t3 = lv_tabview_add_tab(tv, "Shop");
-    profile_create(t1);
-    analytics_create(t2);
-    shop_create(t3);
-
-    color_changer_create(tv);
-*/
 }
 
 /**********************
  *   STATIC FUNCTIONS
  **********************/
-
+#if(0)
 static void profile_create(lv_obj_t * parent)
 {
     lv_obj_t * panel1 = lv_obj_create(parent);
@@ -1639,3 +1610,4 @@ static void meter3_anim_cb(void * var, int32_t v)
     lv_obj_t * label = lv_obj_get_child(meter3, 0);
     lv_label_set_text_fmt(label, "%"LV_PRId32, v);
 }
+#endif

@@ -40,6 +40,16 @@
 			<Add option="-Wall" />
 			<Add directory="." />
 		</Compiler>
+		<Unit filename="ImYou/ui/menu/ui_main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ImYou/ui/menu/ui_main.h" />
+		<Unit filename="ImYou/ui/theme/dark.h" />
+		<Unit filename="ImYou/ui/theme/light.h" />
+		<Unit filename="ImYou/ui/theme/theme.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ImYou/ui/theme/theme.h" />
 		<Unit filename="lv_conf.h" />
 		<Unit filename="lv_drivers/display/ILI9341.h" />
 		<Unit filename="lv_drivers/display/R61581.h" />

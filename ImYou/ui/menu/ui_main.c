@@ -50,7 +50,7 @@ static void btn_event_cb(lv_event_t *e)
 static lv_obj_t *create_rootpage(lv_obj_t *parent)
 {
     lv_obj_t *obj = lv_obj_create(parent);
-    lv_obj_set_size(obj, 320, 176);
+    lv_obj_set_size(obj, 240, 240);
     lv_obj_set_style_bg_color(obj, lv_color_hex(theme.theme_main_page_bg_color), 0);
 
     return obj;

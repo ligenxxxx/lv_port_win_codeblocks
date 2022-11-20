@@ -40,6 +40,12 @@
 			<Add option="-Wall" />
 			<Add directory="." />
 		</Compiler>
+		<Unit filename="ImYou/ui/image/image_background.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ImYou/ui/image/image_instrument_profile.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="ImYou/ui/menu/ui_main.c">
 			<Option compilerVar="CC" />
 		</Unit>

@@ -115,14 +115,20 @@ static lv_obj_t *create_meter(lv_obj_t *parent)
     lv_meter_set_scale_ticks(meter, scale[0], 7, 2, 8, lv_color_black());
     indic[0] = lv_meter_add_arc(meter,scale[0], 30, lv_color_hex(color_array[5]), 10);
     //lv_meter_set_indicator_start_value(meter, indic[0], -90);
-    lv_meter_set_indicator_end_value(meter, indic[0], 0); //lock
+    lv_meter_set_indicator_end_value(meter, indic[0], 0); //locked end value
+    
+    #if(0)
+    lv_meter_indicator_t * indicc = _lv_ll_ins_head(&((lv_meter_t *)meter)->indicator_ll);
+    indicc->type_data.arc.color = lv_color_hex(color_array[0]);
+    lv_obj_invalidate(meter);
+    #endif
 
     //right
     scale[1] = lv_meter_add_scale(meter);
     lv_meter_set_scale_range(meter, scale[1], 0, 90, 90, 270);
     lv_meter_set_scale_ticks(meter, scale[1], 7, 2, 8, lv_color_black());
     indic[1] = lv_meter_add_arc(meter,scale[1], 30, lv_color_hex(color_array[5]), 10);
-    //lv_meter_set_indicator_start_value(meter, indic[1], 0); //lock
+    //lv_meter_set_indicator_start_value(meter, indic[1], 0); //locked start value
     lv_meter_set_indicator_end_value(meter, indic[1],90);
 
     //set_angle_value();

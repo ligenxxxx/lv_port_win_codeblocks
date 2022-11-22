@@ -12,6 +12,8 @@ static lv_meter_indicator_t *indic[2];
 
 int angle = -90;
 int angle_warning[2] = {-45,45};
+uint8_t blink_cnt = 0;
+uint8_t is_blinking = 0;
 const int16_t loc[12][2] = {
     {-90, -60},
     {-60, -50},
@@ -69,32 +71,58 @@ static lv_obj_t *creatr_imstrument_profile(lv_obj_t *parent)
     return obj;
 }
 
-static void set_angle_value()
+static void angle_clip(void)
 {
-    static uint8_t lst_color_index = 0xff;
-    static uint8_t blink_cnt = 0;
-    static uint8_t is_blink = 1;
-    uint8_t i;
-
     if(angle < -90)
         angle = -90;
     else if(angle > 90)
         angle = 90;
+}
 
+static void update_blink_status(void)
+{
     if(angle <= angle_warning[0] || angle >= angle_warning[1])
-            is_blink = 1;
+            is_blinking = 1;
         else
-            is_blink = 0;
-        if(is_blink)
-            blink_cnt ++;
-        else
-            blink_cnt = 0;
-    
+            is_blinking = 0;
+
+    if(is_blinking)
+        blink_cnt ++;
+    else
+        blink_cnt = 0;
+}
+
+static void update_meter_angle(void)
+{
+    if(angle <= 0)
+    {
+        lv_meter_set_indicator_end_value(obj_meter, indic[1],0);
+        lv_meter_set_indicator_start_value(obj_meter, indic[0], angle);
+    }
+    else if(angle > 0)
+    {
+        lv_meter_set_indicator_start_value(obj_meter, indic[0], 0);
+        lv_meter_set_indicator_end_value(obj_meter, indic[1],angle);
+    }
+    #if(0)
+    else
+    {
+        lv_meter_set_indicator_start_value(obj_meter, indic[0], -3);
+        lv_meter_set_indicator_end_value(obj_meter, indic[1],3);
+    }
+    #endif
+}
+
+static void update_meter_color(void)
+{
+    static uint8_t lst_color_index = 0xff;
+    uint8_t i;
+
     for(i=0; i<12; i++)
     {
         if(angle >= loc[i][0] && angle < loc[i][1])
         {
-            if(lst_color_index != i || is_blink)
+            if(lst_color_index != i || is_blinking)
             {
                 if(blink_cnt & 2)
                 {
@@ -114,30 +142,27 @@ static void set_angle_value()
 
         }
     }
+}
 
-    if(angle <= 0)
-    {
-        lv_meter_set_indicator_end_value(obj_meter, indic[1],0);
-        lv_meter_set_indicator_start_value(obj_meter, indic[0], angle);
-    }
-    else if(angle > 0)
-    {
-        lv_meter_set_indicator_start_value(obj_meter, indic[0], 0);
-        lv_meter_set_indicator_end_value(obj_meter, indic[1],angle);
-    }
-    #if(0)
-    else
-    {
-        lv_meter_set_indicator_start_value(obj_meter, indic[0], -3);
-        lv_meter_set_indicator_end_value(obj_meter, indic[1],3);
-    }
-    #endif
+static void angle_add(void)
+{
 
 #if(1)
     angle += 1;
     if(angle > 90)
         angle = -90;
 #endif
+}
+
+static void update_meter()
+{
+
+    angle_clip();
+    update_blink_status();
+    update_meter_color();
+    update_meter_angle();
+
+    angle_add();
 }
 
 static lv_obj_t *create_meter(lv_obj_t *parent)
@@ -168,7 +193,6 @@ static lv_obj_t *create_meter(lv_obj_t *parent)
     indic[1] = lv_meter_add_arc(meter,scale[1], 30, lv_color_hex(color_array[5]), 10);
     lv_meter_set_indicator_start_value(meter, indic[1], 0); //locked start value
 
-    //set_angle_value();
     return meter;
 }
 
@@ -184,7 +208,7 @@ void ui_main_task(void)
     #if(1)
     lv_anim_t a;
     lv_anim_init(&a);
-    lv_anim_set_exec_cb(&a, set_angle_value);
+    lv_anim_set_exec_cb(&a, update_meter);
     lv_anim_set_time(&a, 10000);
     lv_anim_set_playback_delay(&a, 0);
     lv_anim_set_playback_time(&a, 0);

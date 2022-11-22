@@ -11,6 +11,7 @@ static lv_meter_scale_t *scale[2];
 static lv_meter_indicator_t *indic[2];
 
 int angle = -90;
+int angle_warning[2] = {-45,45};
 const int16_t loc[12][2] = {
     {-90, -60},
     {-60, -50},
@@ -26,7 +27,7 @@ const int16_t loc[12][2] = {
     { 60,  90},
 };
 
-uint32_t color_array[12] = {
+uint32_t color_array[13] = {
     0xff0d0d, // 255, 13,  13
     0xff550d, // 255, 85,  13
     0xff980d, // 255, 152, 13
@@ -39,6 +40,7 @@ uint32_t color_array[12] = {
     0xff980d, // 255, 152, 13
     0xff550d, // 255, 85,  13
     0xff0d0d, // 255, 13,  13
+    0xffffff, // 0,   0,   0
 };
 
 static lv_obj_t *create_background(lv_obj_t *parent)
@@ -70,6 +72,8 @@ static lv_obj_t *creatr_imstrument_profile(lv_obj_t *parent)
 static void set_angle_value()
 {
     static uint8_t lst_color_index = 0xff;
+    static uint8_t blink_cnt = 0;
+    static uint8_t is_blink = 1;
     uint8_t i;
 
     if(angle < -90)
@@ -77,17 +81,33 @@ static void set_angle_value()
     else if(angle > 90)
         angle = 90;
 
+    if(angle <= angle_warning[0] || angle >= angle_warning[1])
+            is_blink = 1;
+        else
+            is_blink = 0;
+        if(is_blink)
+            blink_cnt ++;
+        else
+            blink_cnt = 0;
+    
     for(i=0; i<12; i++)
     {
         if(angle >= loc[i][0] && angle < loc[i][1])
         {
-            if(lst_color_index != i)
+            if(lst_color_index != i || is_blink)
             {
-                indic[0]->type_data.arc.color =  lv_color_hex(color_array[i]);
-                indic[1]->type_data.arc.color =  lv_color_hex(color_array[i]);
+                if(blink_cnt & 2)
+                {
+                    indic[0]->type_data.arc.color =  lv_color_hex(color_array[12]);
+                    indic[1]->type_data.arc.color =  lv_color_hex(color_array[12]);
+                }
+                else
+                {
+                    indic[0]->type_data.arc.color =  lv_color_hex(color_array[i]);
+                    indic[1]->type_data.arc.color =  lv_color_hex(color_array[i]);
+                }
                 
                 lv_obj_invalidate(obj_meter);
-
                 lst_color_index = i;
                 break;
             }
@@ -115,7 +135,7 @@ static void set_angle_value()
 
 #if(1)
     angle += 1;
-    if(angle >90)
+    if(angle > 90)
         angle = -90;
 #endif
 }
@@ -161,15 +181,13 @@ void ui_main_task(void)
 
     obj_instrument_profile = creatr_imstrument_profile(obj_background);
 
-    //i = 5;
-    //select_arc_area(i, 1);
     #if(1)
     lv_anim_t a;
     lv_anim_init(&a);
     lv_anim_set_exec_cb(&a, set_angle_value);
     lv_anim_set_time(&a, 10000);
     lv_anim_set_playback_delay(&a, 0);
-    lv_anim_set_playback_time(&a, 300);
+    lv_anim_set_playback_time(&a, 0);
     lv_anim_set_repeat_delay(&a, 0);
     lv_anim_set_repeat_count(&a, LV_ANIM_REPEAT_INFINITE);
     lv_anim_start(&a);

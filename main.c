@@ -56,7 +56,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLi
     /*Run the demo*/
     //lv_demo_widgets();
     //lv_example_btn_1();
-    ui_main();
+    ui_main_task();
 
     while(!lv_win32_quit_signal) {
         /* Periodically call the lv_task handler.

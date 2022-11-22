@@ -94,7 +94,7 @@ static void set_angle_value(void)
 
 #if(1)
     angle += 1;
-    if(angle == 91)
+    if(angle >90)
         angle = -90;
 #endif
 }
@@ -135,10 +135,8 @@ static lv_obj_t *create_meter(lv_obj_t *parent)
     return meter;
 }
 
-void ui_main(void)
+void ui_main_task(void)
 {
-    uint8_t i;
-
 
     obj_background = create_background(lv_scr_act());
 
